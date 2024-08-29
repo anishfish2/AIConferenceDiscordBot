@@ -11,7 +11,8 @@ load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 ROLE_NAME = os.getenv('ROLE_NAME') 
 PASSWORD = os.getenv('PASSWORD')
-print(TOKEN)
+
+print(TOKEN, ROLE_NAME, PASSWORD)
 # Intents
 intents = discord.Intents.default()
 intents.members = True
@@ -27,14 +28,19 @@ async def on_ready():
 @bot.event
 async def on_message(message):
     if isinstance(message.channel, discord.DMChannel):  # Check if it's a DM
+        await message.author.send(f'Messaged Recieved')
         if message.content == PASSWORD:
+            await message.author.send(f'Password Correct')
             guild = discord.utils.get(bot.guilds)
             role = discord.utils.get(guild.roles, name=ROLE_NAME)
+            print(guild, role)
             if role is None:
                 await message.author.send(f'Role "{ROLE_NAME}" not found.')
                 return
             member = guild.get_member(message.author.id)
+            print(member)
             if member:
+                print(f'Adding role "{ROLE_NAME}" to {member}')
                 await member.add_roles(role)
                 await message.author.send(f'You have been given the "{ROLE_NAME}" role!')
             else:
